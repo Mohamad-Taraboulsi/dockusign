@@ -266,6 +266,6 @@ class DocumentController extends Controller
 
     private function authorizeDocumentAccess(Request $request, Document $document): void
     {
-        abort_unless($document->user_id === $request->user()->id, 403);
+        abort_unless((int) $document->user_id === (int) $request->user()->id, 403);
     }
 }
