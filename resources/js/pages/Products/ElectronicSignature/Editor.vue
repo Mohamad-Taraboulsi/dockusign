@@ -2,7 +2,7 @@
 import { Head, router } from '@inertiajs/vue3';
 import axios from 'axios';
 import { Send, ArrowLeft, ZoomIn, ZoomOut } from 'lucide-vue-next';
-import { pdfjsLib } from '@/utils/pdfWorker';
+import * as pdfjsLib from 'pdfjs-dist';
 import { ref, computed, onMounted, watch, nextTick, markRaw } from 'vue';
 import FieldPalette from '@/components/esign/FieldPalette.vue';
 import FieldProperties from '@/components/esign/FieldProperties.vue';
@@ -16,6 +16,15 @@ import type {
 } from '@/types/esign';
 import { RECIPIENT_COLORS } from '@/types/esign';
 
+// Configure worker — try multiple paths for compatibility
+try {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+        'pdfjs-dist/build/pdf.worker.mjs',
+        import.meta.url,
+    ).href;
+} catch {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '';
+}
 
 const props = defineProps<{
     document: Document;

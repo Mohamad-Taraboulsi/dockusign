@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { ArrowLeft, Download } from 'lucide-vue-next';
-import { pdfjsLib } from '@/utils/pdfWorker';
+import * as pdfjsLib from 'pdfjs-dist';
 import { ref, computed, onMounted, nextTick, markRaw } from 'vue';
 import axios from 'axios';
 import { toast } from 'vue-sonner';
@@ -16,6 +16,14 @@ import type {
 } from '@/types/esign';
 import { flattenPdf, downloadBlob } from '@/utils/pdfFlattener';
 
+try {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+        'pdfjs-dist/build/pdf.worker.mjs',
+        import.meta.url,
+    ).href;
+} catch {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '';
+}
 
 const props = defineProps<{
     document: Document;
