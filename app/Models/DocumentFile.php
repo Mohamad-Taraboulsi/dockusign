@@ -12,6 +12,7 @@ class DocumentFile extends Model
         'original_name',
         'stored_path',
         'pdf_path',
+        'flattened_pdf_paths',
         'mime_type',
         'size_bytes',
         'page_count',
@@ -21,6 +22,7 @@ class DocumentFile extends Model
     protected function casts(): array
     {
         return [
+            'flattened_pdf_paths' => 'array',
             'size_bytes' => 'integer',
             'page_count' => 'integer',
             'sort_order' => 'integer',
