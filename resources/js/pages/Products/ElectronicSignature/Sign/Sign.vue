@@ -49,7 +49,9 @@ const filePagesMap = ref<
 >({});
 const pdfDocs = ref<Record<number, any>>({});
 const canvasRefs = ref<Record<string, HTMLCanvasElement>>({});
+const containerRef = ref<HTMLDivElement | null>(null);
 const zoom = ref(1);
+const containerWidth = ref(800);
 
 const fields = computed(() => props.document.fields ?? []);
 const requiredFields = computed(() =>
@@ -85,6 +87,12 @@ function generatePlaceholderPages(file: DocumentFile) {
     }));
 }
 
+function getPageScale(pageWidth: number): number {
+    const maxWidth = containerWidth.value - 48; // account for padding
+    if (pageWidth <= maxWidth) return zoom.value;
+    return (maxWidth / pageWidth) * zoom.value;
+}
+
 // Pre-fill auto fields
 onMounted(() => {
     fields.value.forEach((field) => {
@@ -98,6 +106,23 @@ onMounted(() => {
             fieldValues.value[field.id] = props.recipient.name ?? '';
         }
     });
+
+    // Measure container for responsive scaling
+    if (containerRef.value) {
+        containerWidth.value = containerRef.value.clientWidth;
+    }
+
+    const resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+            containerWidth.value = entry.contentRect.width;
+            // Re-render canvases at new scale
+            nextTick(() => renderAllPages());
+        }
+    });
+    if (containerRef.value) {
+        resizeObserver.observe(containerRef.value);
+    }
+
     loadAllPdfs();
 });
 
@@ -156,7 +181,8 @@ async function renderFilePages(fileId: number) {
         if (!canvas) continue;
 
         const pdfPage = await pdf.getPage(page.pageNum);
-        const viewport = pdfPage.getViewport({ scale: zoom.value });
+        const scale = getPageScale(page.width);
+        const viewport = pdfPage.getViewport({ scale });
         canvas.width = viewport.width;
         canvas.height = viewport.height;
 
@@ -415,7 +441,8 @@ function fieldBorderColor(field: DocumentField) {
         <!-- PDF + Fields -->
         <div
             v-else
-            class="mx-auto flex max-w-4xl flex-col items-center gap-4 p-6"
+            ref="containerRef"
+            class="mx-auto flex w-full max-w-4xl flex-col items-center gap-4 p-6"
         >
             <template v-for="file in document.files" :key="file.id">
                 <div
@@ -423,8 +450,8 @@ function fieldBorderColor(field: DocumentField) {
                     :key="canvasKey(file.id, page.pageNum)"
                     class="relative bg-white shadow-lg"
                     :style="{
-                        width: `${page.width * zoom}px`,
-                        height: `${page.height * zoom}px`,
+                        width: `${page.width * getPageScale(page.width)}px`,
+                        height: `${page.height * getPageScale(page.width)}px`,
                     }"
                 >
                     <!-- PDF canvas -->

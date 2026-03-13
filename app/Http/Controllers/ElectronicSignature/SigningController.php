@@ -58,9 +58,15 @@ class SigningController extends Controller
 
         // If logged in user has matching email, they're authorized - skip verify
         // Or if they've already verified via access code in this session
-        $document->load(['files', 'fields' => function ($q) use ($recipient) {
-            $q->where('recipient_id', $recipient->id)->with('value');
-        }]);
+        $document->load(['files', 'fields.value']);
+
+        // Filter fields to only show this recipient's fields
+        $recipientFields = $document->fields->filter(function ($field) use ($recipient) {
+            return $field->recipient_id === $recipient->id;
+        })->values();
+
+        // Replace the fields relation with filtered results
+        $document->setRelation('fields', $recipientFields);
 
         return Inertia::render('Products/ElectronicSignature/Sign/Sign', [
             'document' => $document,

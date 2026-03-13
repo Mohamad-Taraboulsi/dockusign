@@ -32,11 +32,14 @@ class DocumentField extends Model
     protected function casts(): array
     {
         return [
-            'position_x' => 'decimal:4',
-            'position_y' => 'decimal:4',
-            'width' => 'decimal:4',
-            'height' => 'decimal:4',
+            'document_file_id' => 'integer',
+            'page_number' => 'integer',
+            'position_x' => 'float',
+            'position_y' => 'float',
+            'width' => 'float',
+            'height' => 'float',
             'is_required' => 'boolean',
+            'sort_order' => 'integer',
             'validation_rules' => 'array',
             'options' => 'array',
         ];

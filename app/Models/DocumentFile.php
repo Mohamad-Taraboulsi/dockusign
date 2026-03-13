@@ -18,6 +18,15 @@ class DocumentFile extends Model
         'sort_order',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'size_bytes' => 'integer',
+            'page_count' => 'integer',
+            'sort_order' => 'integer',
+        ];
+    }
+
     public function document(): BelongsTo
     {
         return $this->belongsTo(Document::class);
