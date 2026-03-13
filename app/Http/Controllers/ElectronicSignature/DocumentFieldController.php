@@ -76,7 +76,7 @@ class DocumentFieldController extends Controller
 
     private function authorizeDocumentAccess(Request $request, Document $document): void
     {
-        if ($document->user_id !== $request->user()->id) {
+        if ((int) $document->user_id !== (int) $request->user()->id) {
             abort(response()->json(['message' => 'Unauthorized.'], 403));
         }
 

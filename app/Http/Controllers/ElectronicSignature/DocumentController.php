@@ -126,7 +126,7 @@ class DocumentController extends Controller
 
     public function servePdf(Request $request, Document $document, DocumentFile $file): HttpResponse
     {
-        $isOwner = $document->user_id === $request->user()->id;
+        $isOwner = (int) $document->user_id === (int) $request->user()->id;
         $isRecipient = $document->recipients()->where('email', $request->user()->email)->exists();
         abort_unless($isOwner || $isRecipient, 403);
         abort_unless($file->document_id === $document->id, 404);
@@ -142,7 +142,7 @@ class DocumentController extends Controller
 
     public function downloadPdf(Request $request, Document $document, DocumentFile $file): HttpResponse
     {
-        $isOwner = $document->user_id === $request->user()->id;
+        $isOwner = (int) $document->user_id === (int) $request->user()->id;
         $isRecipient = $document->recipients()->where('email', $request->user()->email)->exists();
         abort_unless($isOwner || $isRecipient, 403);
         abort_unless($file->document_id === $document->id, 404);
