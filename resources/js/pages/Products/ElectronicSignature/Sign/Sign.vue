@@ -182,14 +182,25 @@ async function renderFilePages(fileId: number) {
 
         const pdfPage = await pdf.getPage(page.pageNum);
         const scale = getPageScale(page.width);
-        const viewport = pdfPage.getViewport({ scale });
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
+        const dpr = window.devicePixelRatio || 1;
+
+        // CSS display size
+        const displayWidth = page.width * scale;
+        const displayHeight = page.height * scale;
+
+        // Canvas buffer at higher res for sharpness, capped to avoid mobile limits
+        const bufferScale = Math.min(dpr, 2);
+        const renderViewport = pdfPage.getViewport({ scale: scale * bufferScale });
+
+        canvas.width = renderViewport.width;
+        canvas.height = renderViewport.height;
+        canvas.style.width = `${displayWidth}px`;
+        canvas.style.height = `${displayHeight}px`;
 
         const ctx = canvas.getContext('2d');
         if (!ctx) continue;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        await pdfPage.render({ canvasContext: ctx, viewport } as any).promise;
+        await pdfPage.render({ canvasContext: ctx, viewport: renderViewport } as any).promise;
     }
 }
 
@@ -457,7 +468,7 @@ function fieldBorderColor(field: DocumentField) {
                     <!-- PDF canvas -->
                     <canvas
                         :ref="(el) => setCanvasRef(file.id, page.pageNum, el)"
-                        class="absolute top-0 left-0 h-full w-full"
+                        class="absolute top-0 left-0"
                     />
 
                     <!-- Fields for signing -->
