@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Minus, Plus, Maximize } from 'lucide-vue-next';
-import * as pdfjsLib from 'pdfjs-dist';
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
+import { pdfjsLib } from '@/utils/pdfWorker';
 import {
     computed,
     nextTick,
@@ -15,7 +14,6 @@ import { Button } from '@/components/ui/button';
 import type { DocumentField } from '@/types/esign';
 import DocumentPage from './DocumentPage.vue';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 const props = withDefaults(
     defineProps<{

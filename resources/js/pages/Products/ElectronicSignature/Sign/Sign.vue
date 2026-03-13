@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
 import { CheckCircle2 } from 'lucide-vue-next';
-import * as pdfjsLib from 'pdfjs-dist';
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
+import { pdfjsLib } from '@/utils/pdfWorker';
 import { ref, computed, onMounted, nextTick, markRaw } from 'vue';
 import axios from 'axios';
 import AiAnalysisPanel from '@/components/esign/signing/AiAnalysisPanel.vue';
@@ -18,7 +17,6 @@ import type {
 } from '@/types/esign';
 import { flattenPdf, downloadBlob } from '@/utils/pdfFlattener';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 const props = defineProps<{
     document: Document;

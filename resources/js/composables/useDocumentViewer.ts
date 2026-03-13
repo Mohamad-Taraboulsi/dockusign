@@ -1,9 +1,6 @@
-import * as pdfjsLib from 'pdfjs-dist';
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
+import { pdfjsLib } from '@/utils/pdfWorker';
 import { ref, computed, onUnmounted  } from 'vue';
 import type {Ref} from 'vue';
-
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 export type PageInfo = {
     pageNumber: number;
