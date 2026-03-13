@@ -72,7 +72,7 @@ function generatePlaceholderPages(file: DocumentFile) {
 
 function fieldsForPage(fileId: number, pageNum: number) {
     return fields.value.filter(
-        (f) => f.document_file_id === fileId && f.page_number === pageNum,
+        (f) => Number(f.document_file_id) === Number(fileId) && Number(f.page_number) === Number(pageNum),
     );
 }
 

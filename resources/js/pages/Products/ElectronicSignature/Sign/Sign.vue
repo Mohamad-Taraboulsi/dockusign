@@ -122,7 +122,7 @@ async function loadAllPdfs() {
 }
 
 async function loadPdfData(file: DocumentFile) {
-    const url = `/esign/documents/${props.document.id}/pdf/${file.id}`;
+    const url = `/sign/${props.recipient.id}/pdf/${file.id}`;
     try {
         const pdf = await pdfjsLib.getDocument(url).promise;
         pdfDocs.value[file.id] = markRaw(pdf);
@@ -169,7 +169,7 @@ async function renderFilePages(fileId: number) {
 
 function fieldsForPage(fileId: number, pageNum: number) {
     return fields.value.filter(
-        (f) => f.document_file_id === fileId && f.page_number === pageNum,
+        (f) => Number(f.document_file_id) === Number(fileId) && Number(f.page_number) === Number(pageNum),
     );
 }
 
@@ -211,7 +211,7 @@ async function submit() {
 
                 // Get fields for this file
                 const fileFields = fields.value
-                    .filter((f) => f.document_file_id === file.id)
+                    .filter((f) => Number(f.document_file_id) === Number(file.id))
                     .map((f) => ({
                         id: f.id,
                         type: f.type,
